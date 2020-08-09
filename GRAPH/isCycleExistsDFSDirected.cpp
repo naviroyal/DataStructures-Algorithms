@@ -22,41 +22,36 @@ class Graph{
         }
     }
     
+    bool iscycle(int v,bool visited[],bool *recStack)
+    {
+        if(!visited[v])
+        {
+            visited[v]=true;
+            recStack[v]=true;
+            for(auto neighbour:adjList[v])
+            {
+                if(!visited[neighbour] && iscycle(neighbour,visited,recStack))
+                return true;
+                else if(recStack[neighbour])
+                return true;
+            }
+        }
+        recStack[v]=false;
+        return false;
+    }
+    
     bool isCyclic()
     {
-        vector<int> degree(V,0);
-        for(int u=0;u<V;u++)
-        {
-            for(auto neighbour:adjList[u])
-                degree[neighbour]++;
-        }
+        bool *visited = new bool[V]{0};
+        bool *recStack = new bool[V]{0};
         
-        vector<int>result;
-        int cnt=0;
-        queue<int>q;
         for(int i=0;i<V;i++)
         {
-            if(degree[i]==0)
-                q.push(i);
+            if(iscycle(i,visited,recStack))
+                return true;
+            else 
+                return false;
         }
-        
-        while(!q.empty())
-        {
-            int node=q.front();
-            q.pop();
-            result.push_back(node);
-            for(auto neighbour:adjList[node])
-            {
-                if(--degree[neighbour]==0)
-                    q.push(neighbour);
-            }
-            cnt++;
-        }
-        if(cnt!=V)
-            return true;
-        else
-            return false;
-        
     }
     
 };
@@ -67,11 +62,11 @@ int main()
 {
     Graph g(6);
     g.addEdge(0,1);
-    g.addEdge(0,4);
+    g.addEdge(0,2);
     g.addEdge(1,2);
     // g.addEdge(2,4);
     // g.addEdge(3,4);
-    g.addEdge(2,3);
+    g.addEdge(4,3);
     g.addEdge(3,5);
     if(g.isCyclic()){
         cout<<"Cycle exits";
